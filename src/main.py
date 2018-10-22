@@ -25,11 +25,11 @@ def get_key():
 
 def insert_vids(conn, data):
     sql_insert_chann = 'INSERT INTO youtube.entities.chans ' \
-                       '(id, serial, title, custom_url, description, joined, thumbnail, topic_ids, ' \
+                       '(serial, title, custom_url, description, joined, thumbnail, topic_ids, ' \
                        'topic_categories, privacy_status, is_linked, long_uploads, tracking_id, ' \
                        'moderate_comments, show_related_channels, show_browse, banner_image, subs,' \
                        'video_count, video_views) ' \
-                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
                        'ON CONFLICT DO NOTHING'
 
     cursor = conn.cursor()
@@ -50,10 +50,9 @@ def nest_index(obj, indexes):
     return tmp
 
 
-def get_data(i, ids_by_chans):
+def get_data(i):
     snippet = i['snippet']
-    data = [ids_by_chans[i['id']],
-            i['id'],
+    data = [i['id'],
             nest_index(snippet, ['title']),
             nest_index(snippet, ['customUrl']),
             nest_index(snippet, ['description']),
@@ -77,10 +76,8 @@ def get_data(i, ids_by_chans):
     return data
 
 
-def get_channel_info(channels):
+def get_channel_info(chans):
     url = f'https://www.googleapis.com/youtube/v3/channels'
-    chans = [a[1] for a in channels]
-    ids_by_chans = {a[1]: a[0] for a in channels}
 
     params = {
         'part': 'snippet,contentDetails,brandingSettings,contentOwnerDetails,invideoPromotion,localizations,status,topicDetails,statistics',
@@ -95,7 +92,7 @@ def get_channel_info(channels):
 
     datas = []
     for i in items:
-        data = get_data(i, ids_by_chans)
+        data = get_data(i)
         datas.append(data)
 
     return datas
@@ -103,10 +100,10 @@ def get_channel_info(channels):
 
 def get_channels():
     conn = connection()
-    sql = 'SELECT id, serial FROM youtube.entities.channels ORDER BY RANDOM() LIMIT 50'
+    sql = 'SELECT serial FROM youtube.entities.channels ORDER BY RANDOM() LIMIT 50'
     cursor = conn.cursor()
     cursor.execute(sql)
-    records = cursor.fetchall()
+    records = [x[0] for x in cursor.fetchall()]
 
     cursor.close()
     conn.close()
