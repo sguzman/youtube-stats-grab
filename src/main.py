@@ -27,9 +27,8 @@ def insert_vids(conn, data):
     sql_insert_chann = 'INSERT INTO youtube.entities.chans ' \
                        '(serial, title, custom_url, description, joined, thumbnail, topic_ids, ' \
                        'topic_categories, privacy_status, is_linked, long_uploads, tracking_id, ' \
-                       'moderate_comments, show_related_channels, show_browse, banner_image, subs,' \
-                       'video_count, video_views) ' \
-                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
+                       'moderate_comments, show_related_channels, show_browse, banner_image) ' \
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
                        'ON CONFLICT DO NOTHING'
 
     cursor = conn.cursor()
@@ -68,9 +67,6 @@ def get_data(i):
             nest_index(i, ['brandingSettings', 'channel', 'showRelatedChannels']),
             nest_index(i, ['brandingSettings', 'channel', 'showBrowseView']),
             nest_index(i, ['brandingSettings', 'image', 'bannerImageUrl']),
-            i['statistics']['subscriberCount'],
-            i['statistics']['videoCount'],
-            i['statistics']['viewCount']
             ]
 
     return data
