@@ -76,7 +76,7 @@ def get_channel_info(chans):
     url = f'https://www.googleapis.com/youtube/v3/channels'
 
     params = {
-        'part': 'snippet,contentDetails,brandingSettings,contentOwnerDetails,invideoPromotion,localizations,status,topicDetails,statistics',
+        'part': 'snippet,contentDetails,brandingSettings,contentOwnerDetails,invideoPromotion,localizations,status,topicDetails',
         'id': ','.join(chans),
         'key': get_key()
     }
